@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
 
       table.integer('student_id').unsigned().references('users.id')
-      table.integer('classroom_id').unsigned().references('classroom.id')
+      table.integer('classroom_id').unsigned().references('classrooms.id')
       table.unique(['student_id', 'classroom_id'])
 
       table.timestamp('created_at', { useTz: true })

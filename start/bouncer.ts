@@ -6,6 +6,8 @@
  */
 
 import Bouncer from '@ioc:Adonis/Addons/Bouncer'
+import User from 'App/Models/User'
+import Classroom from 'App/Models/Classroom'
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +31,10 @@ import Bouncer from '@ioc:Adonis/Addons/Bouncer'
 | NOTE: Always export the "actions" const from this file
 |****************************************************************
 */
-export const { actions } = Bouncer
+export const { actions } = Bouncer.define(
+  'editClassroom',
+  (user: User, classroom: Classroom) => user.id === classroom.teacherId
+).define('createClassroom', (user: User) => user.role === 'teacher')
 
 /*
 |--------------------------------------------------------------------------

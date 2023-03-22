@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import '../app/Controllers/Http/UsersController'
+import '../app/Controllers/Http/ClassroomsController'
 
 Route.post('login', async ({ auth, request, response }) => {
   const email = request.input('email')
@@ -28,12 +29,22 @@ Route.post('login', async ({ auth, request, response }) => {
   try {
     const token = await auth.use('api').attempt(email, password)
     return token
-  } catch {
+  } catch (e) {
     return response.unauthorized('Invalid credentials')
   }
 })
 
 Route.resource('/users', 'UsersController').middleware({
   update: ['auth'],
+  show: ['auth'],
+  destroy: ['auth'],
+})
+
+Route.post('/classroom/add/:id', 'ClassroomsController.addToClassroom').middleware('auth')
+Route.post('/classroom/remove/:id', 'ClassroomsController.removeFromClassroom').middleware('auth')
+Route.resource('/classroom', 'ClassroomsController').middleware({
+  store: ['auth'],
+  update: ['auth'],
+  show: ['auth'],
   destroy: ['auth'],
 })

@@ -8,7 +8,7 @@ export default class UsersController {
     let { page, limit } = request.qs()
     // limitando em 50 para evitar sobrecarga do banco de dados
     limit = limit > 50 ? 50 : limit
-    const users = await User.query().paginate(page, limit)
+    const users = await User.query().paginate(page || 1, limit || 10)
 
     return users
   }
@@ -20,20 +20,13 @@ export default class UsersController {
     return user
   }
 
-  public async show({ request }: HttpContextContract) {
-    const userId = request.param('id')
-    const user = await User.findOrFail(userId)
-
-    return user
+  public async show({ auth }: HttpContextContract) {
+    return auth.user!
   }
 
-  public async update({ auth, bouncer, request }: HttpContextContract) {
-    const userId = request.param('id')
-
-    await bouncer.authorize()
-
+  public async update({ auth, request }: HttpContextContract) {
     const body = await request.validate(UpdateUserValidator)
-    const user = await User.findOrFail(userId)
+    const user = auth.user!
 
     await user.merge(body).save()
 
